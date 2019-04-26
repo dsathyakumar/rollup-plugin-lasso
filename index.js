@@ -1,6 +1,5 @@
 'use strict';
 
-const { get } = require('./get');
 const rollup = require('rollup');
 const rollupBabel = require('rollup-plugin-babel');
 const rollupNodeResolve = require('rollup-plugin-node-resolve');
