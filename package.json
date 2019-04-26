@@ -1,1 +1,33 @@
-
+{
+    "name": "rollup-plugin-lasso",
+    "description": "Custom JS Dependency for Lasso.js to pipe outputs from Rollup into Lasso's build lifecycle",
+    "keywords": [
+        "lasso",
+        "lasso-plugin",
+        "rollup",
+        "rollup-plugin",
+        "js",
+        "minify",
+        "transpile"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dsathyakumar/rollup-plugin-lasso.git"
+    },
+    "peerDependencies": {
+        "babel-plugin-external-helpers": "^6.22.0",
+        "rollup": "^0.63.4",
+        "rollup-plugin-babel": "^3.0.7",
+        "rollup-plugin-commonjs": "^9.1.4",
+        "rollup-plugin-node-resolve": "^3.3.0",
+        "rollup-plugin-remap": "^0.0.3",
+        "rollup-plugin-uglify": "^4.0.0"
+    },
+    "license": "Apache License v2.0",
+    "bin": {},
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    },
+    "main": "index.js",
+    "version": "0.0.0"
+}
