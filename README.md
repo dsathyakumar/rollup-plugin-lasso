@@ -164,3 +164,4 @@ The plugin takes care of alerting if some important `props` are misssed.
   }
 }
 ```
+This plugin does not load the list of plugins mentioned here. Its upto the caller of the plugin to have those dependencies defined. `rollup-plugin-lasso` will only attempt to `tryRequire` it. If available, it will apply it to the list of output transforms.
