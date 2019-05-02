@@ -16,6 +16,10 @@ const DEPENDENCY_PROPS = {
 
     // Validation checks and initialization based on properties:
     async init(context) {
+        // we don't force any inline props into this plugin.
+        // if the user marks the dependency as `inline: true` in the browser.json, it is available
+        // to be packaged inline in whatever slot name that is defined
+        // This can be accessed from `LassoPageResult`.
         if (!this.path) {
             throw new Error('"path" property is required');
         }
@@ -37,6 +41,7 @@ const DEPENDENCY_PROPS = {
                     const pluginObj = tryRequire(keyAsPluginName);
                     if(pluginObj) {
                         const pluginConfig = this.pluginList[keyAsPluginName];
+                        // don't uglify if it is not production.
                         if (keyAsPluginName === 'rollup-plugin-uglify' && context.config.cacheProfile !== 'production') {
                             return;
                         }
