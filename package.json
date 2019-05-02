@@ -15,13 +15,8 @@
         "url": "https://github.com/dsathyakumar/rollup-plugin-lasso.git"
     },
     "peerDependencies": {
-        "babel-plugin-external-helpers": "^6.22.0",
         "rollup": "^0.63.4",
-        "rollup-plugin-babel": "^3.0.7",
-        "rollup-plugin-commonjs": "^9.1.4",
-        "rollup-plugin-node-resolve": "^3.3.0",
-        "rollup-plugin-remap": "^0.0.3",
-        "rollup-plugin-uglify": "^4.0.0"
+        "try-require": "^1.2.1"
     },
     "license": "Apache License v2.0",
     "bin": {},
