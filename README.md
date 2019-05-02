@@ -108,3 +108,59 @@ But this plugin can `require` other dependencies & bundle into any slot of [Lass
     }
 
 ```
+
+## Plugin Config
+To make use of [rollup](https://github.com/rollup/rollup) plugins as we bundle with [rollup](https://github.com/rollup/rollup).
+
+- The list of plugins can be passed over through the `rollup-config` property.
+- The `output` options can be passed into the `output` property.
+- `initiator`: Most of the rollup plugins come with a single function call. For eg) `rollu-plugin-remap` can be directly invoked over a config. This pattern varies for some plugins like `rollup-plugin-uglify` that gets invoked as `rollupPluginUglify.uglify`. Here the function `uglify` is the initiator function and hence is named as the initiator as the plugin invocation needs to be of type `function`.
+- `cacheProfile`: This is based on Lasso's `cacheProfile`. if `production`, it will not create sourcemaps. And in development, it would not `uglify`.
+
+The plugin takes care of alerting if some important `props` are misssed.
+
+```javascript
+{
+  "rollup-config": {
+    "output": {
+      "format": "umd",
+      "amd": {
+        "id": "myAwesomeFeature"
+      },
+      "name": "myAwesomeFeature",
+      "exports": "named"
+    },
+    "plugins": {
+      "rollup-plugin-node-resolve": {
+        "jsnext": true,
+        "main": true,
+        "browser": true
+      },
+      "rollup-plugin-commonjs": {
+        
+      },
+      "rollup-plugin-babel": {
+        "exclude": "node_modules/**",
+        "babelrc": false,
+        "presets": [
+          [
+            "env",
+            {
+              "modules": false
+            }
+          ]
+        ],
+        "plugins": [
+          "external-helpers"
+        ]
+      },
+      "rollup-plugin-uglify": {
+        "initiator": "uglify",
+        "config": {
+          
+        }
+      }
+    }
+  }
+}
+```
