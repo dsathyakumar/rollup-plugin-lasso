@@ -84,8 +84,8 @@ const modB = require('modB')
 ```
 
 ## How different is this from [lasso-minify-transpile-inline](https://github.com/dsathyakumar/lasso-minify-transpile-inline/)
-`lasso-minify-transpile-inline` does the same job for a single file dependency that needs to be included inline.
-But this plugin can `require` other dependecies & bundle into any slot of Lasso or `inline` as it uses Rollup.
+[lasso-minify-transpile-inline](https://github.com/dsathyakumar/lasso-minify-transpile-inline/) does the same job for a single file dependency that needs to be included inline.
+But this plugin can `require` other dependencies & bundle into any slot of [Lasso JS](https://github.com/lasso-js/lasso) or `inline` as it uses [rollup](https://github.com/rollup/rollup) & you get a scope hoisted solution. By piping this output to [Lasso JS](https://github.com/lasso-js/lasso), it gets cached by [Lasso JS](https://github.com/lasso-js/lasso) as part of its build process & gaining the other goodness of being part of [Lasso JS](https://github.com/lasso-js/lasso) lifecycle such as [browser-refresh](https://github.com/patrick-steele-idem/browser-refresh).
 
 
 ### Include this plugin in the lasso config as:
