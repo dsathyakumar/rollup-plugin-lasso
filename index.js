@@ -37,6 +37,9 @@ const DEPENDENCY_PROPS = {
                     const pluginObj = tryRequire(keyAsPluginName);
                     if(pluginObj) {
                         const pluginConfig = this.pluginList[keyAsPluginName];
+                        if (keyAsPluginName === 'rollup-plugin-uglify' && context.config.cacheProfile !== 'production') {
+                            return;
+                        }
                         // pluginObj has to be a function
                         if (typeof pluginObj === 'function') {
                             // this.plugins.push(pluginObj.bind(null, pluginConfig));
