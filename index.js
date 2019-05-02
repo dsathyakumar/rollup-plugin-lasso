@@ -1,76 +1,95 @@
 'use strict';
 
+const tryRequire = require('try-require');
+const { get, has } = require('./get');
+const { join } = require('path');
 const rollup = require('rollup');
-const rollupBabel = require('rollup-plugin-babel');
-const rollupNodeResolve = require('rollup-plugin-node-resolve');
-const rollupCommonjs = require('rollup-plugin-commonjs');
-const rollupUglify = require('rollup-plugin-uglify');
-const rollupRemap = require('rollup-plugin-remap');
 
-const DEPENDENCY_TYPE = 'lasso-rollup';
-
+const DEPENDENCY_TYPE = 'rollup-lasso';
 const DEPENDENCY_PROPS = {
     // Declare which properties can be passed to the dependency type
     properties: {
         'path': 'string',
-        'inline': true,
-        'type': 'string'
+        'type': 'string',
+        'rollup-config': 'object'
     },
 
     // Validation checks and initialization based on properties:
-    async init(/* context */) {
+    async init(context) {
         if (!this.path) {
             throw new Error('"path" property is required');
-        }
-
-        if (!this.inline) {
-            throw new Error('"inline" property is required');
         }
 
         if (!this.type || this.type !== DEPENDENCY_TYPE) {
             throw new Error('"type" property is required');
         }
 
+        if (!this['rollup-config'] || typeof this['rollup-config'] !== 'object') {
+            throw new Error('rollup-config must be specified as an object');
+        }
+
+        if (this['rollup-config']) {
+            this.outputOptions = this['rollup-config'].output;
+            this.plugins = [];
+            this.pluginList = this['rollup-config'].plugins || {};
+            if (Object.keys(this.pluginList).length) {
+                Object.keys(this.pluginList).forEach(keyAsPluginName => {
+                    const pluginObj = tryRequire(keyAsPluginName);
+                    if(pluginObj) {
+                        const pluginConfig = this.pluginList[keyAsPluginName];
+                        // pluginObj has to be a function
+                        if (typeof pluginObj === 'function') {
+                            // this.plugins.push(pluginObj.bind(null, pluginConfig));
+                            this.plugins.push(pluginObj(pluginConfig));
+                        } else if (typeof pluginObj === 'object' && has(pluginConfig, 'initiator')) {
+                            // or an object. if an object, it uses the initiator as the root fn
+                            // this.plugins.push(pluginObj[pluginConfig.initiator].bind(null, pluginConfig.config));
+                            this.plugins.push(pluginObj[pluginConfig.initiator](pluginConfig.config));
+                        }
+                    }
+                });
+            }
+
+            if (!has(this.outputOptions, 'format')) {
+                this.outputOptions.format = 'umd';
+            }
+            if (!has(this.outputOptions, 'exports')) {
+                this.outputOptions.exports = 'auto';
+            }
+            if (!has(this.outputOptions, 'name')) {
+                throw new Error('rollup-config must specify "output" option with a "name"');
+            }
+            if ((this.outputOptions.format === 'amd' || this.outputOptions.format === 'umd') && !has(this.outputOptions, 'amd')) {
+                throw new Error('if output format is "amd" or "umd", rollup-config must specify "output" option with "amd" property that contains a "id" prop');
+            }
+            this.outputOptions.file =  join(__dirname, '__tmp.js');
+            this.outputOptions.sourcemap = (context.config.cacheProfile !== 'production' ? 'inline' : false);
+        }
         // NOTE: resolvePath can be used to resolve a provided relative path to a full path
         this.path = this.resolvePath(this.path);
     },
 
-    // Read the resource:
-    async read(/* context */) {
+    // Read the JS resource dependency
+    async read(context) {
         const bundle = await rollup.rollup({
             input: this.path,
-            plugins: [
-                rollupNodeResolve({
-                    jsnext: true,
-                    main: true,
-                    browser: true
-                }),
-                rollupCommonjs(),
-                rollupBabel({
-                    exclude: 'node_modules/**',
-                    babelrc: false,
-                    presets: [['env', { modules: false }]],
-                    plugins: [
-                        'external-helpers'
-                    ]
-                }),
-                rollupUglify.uglify({
-                    output: {
-                        comments: function(node, comment) {
-                            const text = comment.value;
-                            const type = comment.type;
-                            if (type === 'comment2') {
-                                // multiline comment
-                                return /Global Header|@preserve|@license|@cc_on|Global Widget Delivery Platform/i.test(text);
-                            }
-                        }
-                    }
-                })
-            ]
+            output: {},
+            plugins: this.plugins
         });
-        const { output } = await bundle.generate();
-        // finally return code to Lasso (pipe output of Rollup to Lasso)
-        // return get(src, 'code', '');
+        let output = '';
+        try {
+            // we are only generating the bundle here & not writing the bundle to disk
+            // eventually this will be cached by Lasso.
+            // we have to explore if rollup cache can also be used.
+            // the file here is something that rollup needs to specify to rawOutputOptions
+            // and is used when writing the bundle to disk.
+            output = await bundle.generate(this.outputOptions);
+        } catch (e) {
+            console.log(e);
+        } finally {
+            // finally return code to Lasso (pipe output of Rollup to Lasso)
+            return get(output, 'code', '');
+        }
     },
 
     // getSourceFile is optional and is only used to determine the last modified time
