@@ -3,7 +3,8 @@
 A minimalist [rollup](https://github.com/rollup/rollup) plugin that fits into [Lasso JS](https://github.com/lasso-js/lasso) lifecycle, by piping the output from Rollup into Lasso.
 
 ## What it does?
-- Does bundling with [rollup](https://github.com/rollup/rollup) & pipes the output to [Lasso JS](https://github.com/lasso-js/lasso). This is more about using Rollup in places where Lasso cannot be used.
+- Does bundling with [rollup](https://github.com/rollup/rollup) & pipes the output to [Lasso JS](https://github.com/lasso-js/lasso). 
+- This is more about using Rollup in places where Lasso cannot be used.
 
 ## Usage
 
