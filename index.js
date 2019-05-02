@@ -41,8 +41,8 @@ const DEPENDENCY_PROPS = {
                     const pluginObj = tryRequire(keyAsPluginName);
                     if(pluginObj) {
                         const pluginConfig = this.pluginList[keyAsPluginName];
-                        // don't uglify if it is not production.
-                        if (keyAsPluginName === 'rollup-plugin-uglify' && context.config.cacheProfile !== 'production') {
+                        // don't uglify if it is development.
+                        if (keyAsPluginName === 'rollup-plugin-uglify' && context.config.cacheProfile === 'development') {
                             return;
                         }
                         // pluginObj has to be a function
@@ -70,8 +70,9 @@ const DEPENDENCY_PROPS = {
             if ((this.outputOptions.format === 'amd' || this.outputOptions.format === 'umd') && !has(this.outputOptions, 'amd')) {
                 throw new Error('if output format is "amd" or "umd", rollup-config must specify "output" option with "amd" property that contains a "id" prop');
             }
+            // we don't write to disk with this file. This is just passed into rawOutputOptions, something that Rollup expects
             this.outputOptions.file =  join(__dirname, '__tmp.js');
-            this.outputOptions.sourcemap = (context.config.cacheProfile !== 'production' ? 'inline' : false);
+            this.outputOptions.sourcemap = (context.config.cacheProfile === 'development' ? 'inline' : false);
         }
         // NOTE: resolvePath can be used to resolve a provided relative path to a full path
         this.path = this.resolvePath(this.path);
@@ -90,7 +91,7 @@ const DEPENDENCY_PROPS = {
             // eventually this will be cached by Lasso.
             // we have to explore if rollup cache can also be used.
             // the file here is something that rollup needs to specify to rawOutputOptions
-            // and is used when writing the bundle to disk.
+            // and is used when writing the bundle to disk. But not used in this case.
             output = await bundle.generate(this.outputOptions);
         } catch (e) {
             console.log(e);
