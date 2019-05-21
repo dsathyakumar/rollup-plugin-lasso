@@ -15,7 +15,7 @@
         "url": "https://github.com/dsathyakumar/rollup-plugin-lasso.git"
     },
     "peerDependencies": {
-        "rollup": "^0.63.4",
+        "rollup": ">=1.0.0",
         "try-require": "^1.2.1"
     },
     "license": "Apache License v2.0",
@@ -24,5 +24,5 @@
         "registry": "https://registry.npmjs.org/"
     },
     "main": "index.js",
-    "version": "0.0.2"
+    "version": "0.0.3"
 }

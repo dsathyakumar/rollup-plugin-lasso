@@ -16,6 +16,16 @@ const DEPENDENCY_PROPS = {
 
     // Validation checks and initialization based on properties:
     async init(context) {
+        if (!rollup) {
+            throw new Error('Rollup not found! This plugin requires Rollup to be installed');
+        }
+        let rollupMajorVersion = (rollup.VERSION) ? rollup.VERSION.split('.')[0] : '';
+        if (rollupMajorVersion.length) {
+            rollupMajorVersion = Number(rollupMajorVersion);
+            if (rollupMajorVersion < 1) {
+                throw new Error(' This plugin requires Rollup >= 1');
+            }
+        }
         // we don't force any inline props into this plugin.
         // if the user marks the dependency as `inline: true` in the browser.json, it is available
         // to be packaged inline in whatever slot name that is defined
@@ -97,7 +107,10 @@ const DEPENDENCY_PROPS = {
             console.log(e);
         } finally {
             // finally return code to Lasso (pipe output of Rollup to Lasso)
-            return get(output, 'code', '');
+            // for now we only get the outout from first chunk.
+            // if we ever want all chunks to be concatenated into one.
+            // That can be dealt with in a separate PR
+            return get(output, 'output[0].code', '');
         }
     },
 
