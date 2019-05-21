@@ -2,6 +2,14 @@
 
 A minimalist [rollup](https://github.com/rollup/rollup) plugin that fits into [Lasso JS](https://github.com/lasso-js/lasso) lifecycle, by piping the output from Rollup into Lasso.
 
+## Requirements
+- Right now this bundles a single entry point input file
+- If there are multiple entry points, this will have to be updated to concatenate multiple sources.
+- At this moment we bundle only the first chunk. To include subsequent chunks, this plugin must be upgraded.
+- Assets are not included in this.
+- For Rollup < 1, use v0.0.2
+- For Rollup >= 1, use v0.0.3
+
 ## What it does?
 - Does bundling with [rollup](https://github.com/rollup/rollup) & pipes the output to [Lasso JS](https://github.com/lasso-js/lasso). 
 - This is more about using Rollup in places where Lasso cannot be used.
